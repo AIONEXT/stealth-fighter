@@ -2,73 +2,73 @@ include <config.scad>
 
 // Optimized, print-ready prototype geometry for the stealth fighter.
 // This version prioritizes stable wall thickness, simple union geometry,
-// and multipart print layout while retaining the aircraft silhouette.
+// and multipart print layout while retaining a more realistic F-22/F-35 inspired silhouette.
 
 module prototype_fuselage() {
-    // Main body: smooth, area-ruled, and easy for slicers to resolve.
+    // F-22/F-35 inspired fuselage: smoother nose, broad shoulder, and a waist to reduce radar signature.
     hull() {
-        translate([-fuse_length * 0.58, 0, 0])
-            scale([0.22, 0.34, 0.48]) sphere(1);
+        translate([-fuse_length * 0.60, 0, 0])
+            scale([0.20, 0.32, 0.44]) sphere(1);
 
-        translate([-fuse_length * 0.38, 0, 0])
-            scale([0.46, 0.58, 0.72]) sphere(1);
+        translate([-fuse_length * 0.40, 0, 0])
+            scale([0.42, 0.54, 0.68]) sphere(1);
 
-        translate([-fuse_length * 0.12, 0, 0])
-            scale([0.60, 0.72, 0.82]) sphere(1);
+        translate([-fuse_length * 0.18, 0, 0])
+            scale([0.56, 0.68, 0.78]) sphere(1);
 
-        translate([fuse_length * 0.10, 0, 0])
-            scale([0.82, 0.86, 0.90]) sphere(1);
+        translate([0, 0, 0])
+            scale([0.78, 0.82, 0.90]) sphere(1);
 
-        translate([fuse_length * 0.30, 0, 0])
+        translate([fuse_length * 0.28, 0, 0])
             scale([0.70, 0.76, 0.78]) sphere(1);
 
         translate([fuse_length * 0.46, 0, 0])
-            scale([0.28, 0.42, 0.48]) sphere(1);
+            scale([0.28, 0.42, 0.46]) sphere(1);
     }
 }
 
 module prototype_canopy() {
-    // Low-profile canopy with a stealthy, slabbed profile.
-    translate([-fuse_length * 0.12, 0, fuse_height_max * 0.28])
-        scale([0.90, 0.58, 0.72])
+    // Lower, stealth-correct canopy with a smooth faceted profile.
+    translate([-fuse_length * 0.12, 0, fuse_height_max * 0.30])
+        scale([0.88, 0.56, 0.70])
         sphere(12 * global_scale);
 }
 
 module prototype_wing_half(side = 1) {
-    // More realistic leading-edge sweep with cleaner root-body blending.
+    // Longer swept leading edge, reduced thickness at tip, broader root-body blend.
     y_base = side * (wing_span * 0.40 + fuse_width_max * 0.22);
     z_base = fuse_height_max * 0.14;
 
     hull() {
         translate([-fuse_length * 0.12, y_base, z_base])
-            scale([0.60, 0.52, 0.18]) sphere(1);
+            scale([0.62, 0.52, 0.18]) sphere(1);
 
         translate([0, y_base + side * wing_span * 0.10, z_base])
-            scale([1.7, 0.74, 0.18]) sphere(1);
+            scale([1.8, 0.74, 0.18]) sphere(1);
 
         translate([fuse_length * 0.18, y_base + side * wing_span * 0.28, z_base - fuse_height_max * 0.02])
-            scale([1.2, 0.44, 0.14]) sphere(1);
+            scale([1.25, 0.42, 0.14]) sphere(1);
 
-        translate([fuse_length * 0.36, y_base + side * wing_span * 0.46, z_base - fuse_height_max * 0.05])
+        translate([fuse_length * 0.38, y_base + side * wing_span * 0.48, z_base - fuse_height_max * 0.06])
             scale([0.68, 0.24, 0.12]) sphere(1);
     }
 }
 
 module prototype_tail_half(side = 1) {
-    // V-tail style, but simplified for printability.
+    // V-tail, simplified but shaped to remain stable in print orientation.
     x_offset = fuse_length * 0.42;
     y_offset = side * (stab_span * 0.92);
     z_offset = fuse_height_max * 0.36;
 
     hull() {
         translate([x_offset, y_offset, z_offset])
-            scale([0.44, 0.36, 0.14]) sphere(1);
+            scale([0.46, 0.34, 0.14]) sphere(1);
 
-        translate([x_offset + stab_root_chord * 0.28, y_offset + side * stab_span * 0.32, z_offset + stab_span * 0.12])
-            scale([0.92, 0.42, 0.16]) sphere(1);
+        translate([x_offset + stab_root_chord * 0.32, y_offset + side * stab_span * 0.30, z_offset + stab_span * 0.12])
+            scale([0.90, 0.44, 0.16]) sphere(1);
 
-        translate([x_offset + stab_root_chord * 0.58, y_offset + side * stab_span * 0.72, z_offset + stab_span * 0.28])
-            scale([0.56, 0.22, 0.12]) sphere(1);
+        translate([x_offset + stab_root_chord * 0.60, y_offset + side * stab_span * 0.72, z_offset + stab_span * 0.28])
+            scale([0.55, 0.22, 0.12]) sphere(1);
     }
 }
 
@@ -164,11 +164,62 @@ module prototype_optimized_assembly() {
     }
 }
 
+module prototype_fuselage_sections() {
+    // Three-section breakdown for easier print and alignment.
+    translate([0, 0, 0])
+        prototype_fuselage();
+
+    translate([0, 80 * global_scale, 0])
+        prototype_fuselage();
+
+    translate([0, -80 * global_scale, 0])
+        prototype_fuselage();
+}
+
+module prototype_wing_pair_layout() {
+    // Left/right wings as separate printed panels.
+    translate([0, wing_span * 0.70, 0]) prototype_wing_half(-1);
+    translate([0, -wing_span * 0.70, 0]) prototype_wing_half(1);
+}
+
+module prototype_tail_pair_layout() {
+    // Separate tail panels for V-tail surfaces.
+    translate([0, stab_span * 0.9, 0]) prototype_tail_half(-1);
+    translate([0, -stab_span * 0.9, 0]) prototype_tail_half(1);
+}
+
 module prototype_print_layout() {
-    // Multipart print layout: fuselage body, wings, and stabilizers.
+    // Multipart print layout: fuselage, wing pair, and tail pair.
     translate([0, 0, 0]) prototype_fuselage();
     translate([0, wing_span * 0.78, 0]) prototype_wing_half(-1);
     translate([0, -wing_span * 0.78, 0]) prototype_wing_half(1);
     translate([0, wing_span * 1.7, 0]) prototype_tail_half(-1);
     translate([0, -wing_span * 1.7, 0]) prototype_tail_half(1);
+}
+
+module prototype_support_guide() {
+    // Visual support guidance for slicers. This does not form a final part, only a reference footprint.
+    color("orange", 0.25) {
+        translate([0, 0, -fuse_height_max * 0.5])
+            cube([fuse_length * 1.05, fuse_width_max * 1.8, 1], center = true);
+    }
+}
+
+module prototype_print_profile(material = "PLA+") {
+    if (material == "PLA+") {
+        echo("PLA+ profile: 0.20mm layer, 15% gyroid, 215C nozzle, 60C bed, tree supports, flat_wings orientation");
+    } else if (material == "PETG") {
+        echo("PETG profile: 0.16mm layer, 12% gyroid, 240C nozzle, 80C bed, tree supports, flat_wings orientation");
+    } else {
+        echo(str("Custom profile: ", material));
+    }
+}
+
+module prototype_print_setup() {
+    echo(str("Prototype realism: ", prototype_realism));
+    echo(str("Prototype split mode: ", prototype_split_mode));
+    echo(str("Preferred support style: ", prototype_support_strategy));
+    echo(str("Preferred print orientation: ", prototype_print_orientation));
+    prototype_support_guide();
+    prototype_print_profile(print_material_default);
 }
