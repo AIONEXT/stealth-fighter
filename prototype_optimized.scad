@@ -167,10 +167,3 @@ module prototype_print_layout() {
     translate([0, wing_span * 1.6, 0]) prototype_tail_half(-1);
     translate([0, -wing_span * 1.6, 0]) prototype_tail_half(1);
 }
-
-// Keep the preview output clean and stable for OpenSCAD.
-if (print_optimized) {
-    prototype_optimized_assembly();
-} else {
-    prototype_optimized_assembly();
-}
