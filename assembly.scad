@@ -19,6 +19,7 @@ include <intakes.scad>
 include <exhausts.scad>
 include <baydoors.scad>
 include <landing_gear.scad>
+include <prototype_optimized.scad>
 
 // ============================================================
 // DISPLAY STATE OVERRIDES (for preview)
@@ -34,42 +35,42 @@ include <landing_gear.scad>
 // ============================================================
 module stealth_fighter_assembly() {
     $fn = resolution;
-    
+
     // Fuselage (base component)
     if (show_fuselage) {
         fuselage_assembly();
     }
-    
+
     // Wings positioned on fuselage
     if (show_wings) {
         wings_positioned();
     }
-    
+
     // Stabilizers (V-tail or conventional) at aft fuselage
     if (show_stabilizers) {
         stabilizers_positioned();
     }
-    
+
     // Canopy on top of fuselage
     if (show_canopy) {
         canopy();
     }
-    
+
     // Cockpit interior (inside canopy)
     if (show_cockpit) {
         cockpit();
     }
-    
+
     // Engine intakes
     if (show_intakes) {
         intakes();
     }
-    
+
     // Engine exhausts
     if (show_exhausts) {
         exhausts();
     }
-    
+
     // Weapon bay doors
     if (show_bay_doors) {
         if (show_open_doors) {
@@ -78,10 +79,22 @@ module stealth_fighter_assembly() {
             bay_doors_closed();
         }
     }
-    
+
     // Landing gear
     if (show_landing_gear) {
         landing_gear();
+    }
+}
+
+module preview_model() {
+    if (print_optimized) {
+        if (prototype_print_layout) {
+            prototype_print_layout();
+        } else {
+            prototype_optimized_assembly();
+        }
+    } else {
+        stealth_fighter_assembly();
     }
 }
 
@@ -90,9 +103,11 @@ module stealth_fighter_assembly() {
 // ============================================================
 
 // Default preview (clean configuration)
-stealth_fighter_assembly();
+preview_model();
 
 // Uncomment for specific configurations:
+// print_optimized = true; preview_model();             // enhanced printable prototype
+// prototype_print_layout = true; print_optimized = true; preview_model();
 // show_open_doors = true;  stealth_fighter_assembly();  // Combat config
 // show_gear_down = false; stealth_fighter_assembly();  // Clean config
 // show_pilot = true;       stealth_fighter_assembly();  // Display config
