@@ -27,6 +27,8 @@ show_open_doors = false;         // true = open weapon bay doors
 show_gear_down = true;           // true = landing gear deployed
 show_pilot = false;              // Show pilot figure in cockpit
 show_weapons = true;             // Show internal weapons in bays
+print_optimized = false;         // true = use the enhanced print-friendly prototype
+prototype_print_layout = false;   // true = show the print-oriented part layout
 
 // ============================================================
 // FUSELAGE PARAMETERS
